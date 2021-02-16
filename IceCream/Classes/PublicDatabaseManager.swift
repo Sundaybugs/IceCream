@@ -17,13 +17,15 @@ final class PublicDatabaseManager: DatabaseManager {
     
     let container: CKContainer
     let database: CKDatabase
+    let qualityOfService: QualityOfService
     
     let syncObjects: [Syncable]
     
-    init(objects: [Syncable], container: CKContainer) {
+    init(objects: [Syncable], container: CKContainer, qualityOfService: QualityOfService) {
         self.syncObjects = objects
         self.container = container
         self.database = container.publicCloudDatabase
+        self.qualityOfService = qualityOfService
     }
     
     func fetchChangesInDatabase(_ callback: ((Error?) -> Void)?) {
@@ -107,7 +109,9 @@ final class PublicDatabaseManager: DatabaseManager {
         createOp.modifySubscriptionsCompletionBlock = { _, _, _ in
             
         }
-        createOp.qualityOfService = .utility
+        createOp.qualityOfService = qualityOfService
+        createOp.allowsCellularAccess = true
+        
         database.add(createOp)
         #endif
     }

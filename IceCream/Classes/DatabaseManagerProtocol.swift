@@ -15,9 +15,11 @@ protocol DatabaseManager: class {
     /// An encapsulation of content associated with an app.
     var container: CKContainer { get }
     
+    var qualityOfService: QualityOfService { get }
+    
     var syncObjects: [Syncable] { get }
     
-    init(objects: [Syncable], container: CKContainer)
+    init(objects: [Syncable], container: CKContainer, qualityOfService: QualityOfService)
     
     func prepare()
     
