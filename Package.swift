@@ -13,6 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(
+            name: "Realm",
             url: "https://github.com/realm/realm-cocoa", 
             from: "10.8.0"
         )
@@ -20,7 +21,10 @@ let package = Package(
     targets: [
         .target(
             name: "IceCream",
-            dependencies: ["RealmSwift", "Realm"],
+            dependencies: [
+                .product(name: "Realm", package: "Realm"),
+                .product(name: "RealmSwift", package: "Realm")
+            ],
             path: "IceCream",
             sources: ["Classes"])
     ],
