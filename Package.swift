@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
@@ -12,11 +12,7 @@ let package = Package(
             targets: ["IceCream"]),
     ],
     dependencies: [
-        .package(
-            name: "Realm",
-            url: "https://github.com/realm/realm-cocoa", 
-            from: "10.8.0"
-        )
+        .package(name: "Realm", url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.8.0"))
     ],
     targets: [
         .target(
