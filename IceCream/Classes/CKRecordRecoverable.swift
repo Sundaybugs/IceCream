@@ -72,12 +72,12 @@ extension CKRecordRecoverable where Self: Object {
                     for reference in value {
                         if let objectClassName = prop.objectClassName,
                            let schema = realm.schema.objectSchema.first(where: { $0.className == objectClassName }),
-                           let primaryKeyValue = primaryKeyForRecordID(recordID: reference.recordID, schema: schema) {
+                           let primaryKeyValue = primaryKeyForRecordID(recordID: reference.recordID, schema: schema) as? AnyHashable {
                             if schema.className == U.className() {
                                 if let existObject = realm.object(ofType: U.self, forPrimaryKey: primaryKeyValue) {
                                     uList.append(existObject)
                                 } else {
-                                    pendingUTypeRelationshipsWorker.addToPendingListElement(propertyName: prop.name, primaryKeyValue: primaryKeyValue)
+                                    pendingUTypeRelationshipsWorker.addToPendingList(elementPrimaryKeyValue: primaryKeyValue, propertyName: prop.name, owner: o)
                                 }
                             }
                             
@@ -85,7 +85,7 @@ extension CKRecordRecoverable where Self: Object {
                                 if let existObject = realm.object(ofType: V.self, forPrimaryKey: primaryKeyValue) {
                                     vList.append(existObject)
                                 } else {
-                                    pendingVTypeRelationshipsWorker.addToPendingListElement(propertyName: prop.name, primaryKeyValue: primaryKeyValue)
+                                    pendingVTypeRelationshipsWorker.addToPendingList(elementPrimaryKeyValue: primaryKeyValue, propertyName: prop.name, owner: o)
                                 }
                             }
                             
@@ -93,7 +93,7 @@ extension CKRecordRecoverable where Self: Object {
                                 if let existObject = realm.object(ofType: W.self, forPrimaryKey: primaryKeyValue) {
                                     wList.append(existObject)
                                 } else {
-                                    pendingWTypeRelationshipsWorker.addToPendingListElement(propertyName: prop.name, primaryKeyValue: primaryKeyValue)
+                                    pendingWTypeRelationshipsWorker.addToPendingList(elementPrimaryKeyValue: primaryKeyValue, propertyName: prop.name, owner: o)
                                 }
                             }
                             
