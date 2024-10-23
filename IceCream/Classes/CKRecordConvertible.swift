@@ -117,19 +117,20 @@ extension CKRecordConvertible where Self: Object {
                     /// We may get List<Cat> here
                     /// The item cannot be casted as List<Object>
                     /// It can be casted at a low-level type `ListBase`
-                    guard let list = item as? ListBase, list.count > 0 else { break }
+                    guard let list = realm?.objects(Self.self), list.count > 0 else { break }
                     var referenceArray = [CKRecord.Reference]()
-                    let wrappedArray = list._rlmArray
-                    for index in 0..<wrappedArray.count {
-                        guard let object = wrappedArray[index] as? Object, let primaryKey = object.objectSchema.primaryKeyProperty?.name else { continue }
+                    
+                    for index in 0..<list.count {
+                        let object = list[index]
+                        guard let primaryKey = object.objectSchema.primaryKeyProperty?.name else { continue }
                         switch object.objectSchema.primaryKeyProperty?.type {
                         case .string:
-                            if let primaryValueString = object[primaryKey] as? String, let obj = object as? CKRecordConvertible, !obj.isDeleted {
+                            if let primaryValueString = object[primaryKey] as? String, !object.isDeleted {
                                 let referenceZoneID = CKRecordZone.ID(zoneName: "\(object.objectSchema.className)sZone", ownerName: CKCurrentUserDefaultName)
                                 referenceArray.append(CKRecord.Reference(recordID: CKRecord.ID(recordName: primaryValueString, zoneID: referenceZoneID), action: .none))
                             }
                         case .int:
-                            if let primaryValueInt = object[primaryKey] as? Int, let obj = object as? CKRecordConvertible, !obj.isDeleted {
+                            if let primaryValueInt = object[primaryKey] as? Int, !object.isDeleted {
                                 let referenceZoneID = CKRecordZone.ID(zoneName: "\(object.objectSchema.className)sZone", ownerName: CKCurrentUserDefaultName)
                                 referenceArray.append(CKRecord.Reference(recordID: CKRecord.ID(recordName: "\(primaryValueInt)", zoneID: referenceZoneID), action: .none))
                             }
@@ -150,10 +151,8 @@ extension CKRecordConvertible where Self: Object {
                 r[prop.name] = item as? CKRecordValue
             case .object:
                 guard let objectName = prop.objectClassName else { break }
-                if objectName == CreamLocation.className(), let creamLocation = item as? CreamLocation {
-                    r[prop.name] = creamLocation.location
-                } else if objectName == CreamAsset.className(), let creamAsset = item as? CreamAsset {
-                    // If object is CreamAsset, set record with its wrapped CKAsset value
+                // If object is CreamAsset, set record with its wrapped CKAsset value
+                if objectName == CreamAsset.className(), let creamAsset = item as? CreamAsset {
                     r[prop.name] = creamAsset.asset
                 } else if let owner = item as? CKRecordConvertible {
                     // Handle to-one relationship: https://realm.io/docs/swift/latest/#many-to-one
