@@ -13,7 +13,7 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/realm/realm-swift", 
+            url: "https://github.com/realm/realm-swift.git", 
             "4.1.1"..<"11.0.0"
         )
     ],
